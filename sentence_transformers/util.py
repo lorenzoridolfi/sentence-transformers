@@ -324,7 +324,7 @@ def batch_to_device(batch, target_device: device):
             batch[key] = batch[key].to(target_device)
         else:
             temp = batch[key]
-            batch[key] = torch.tensor(temp).to(target_device)
+            batch[key] = torch.tensor(int(temp), dtype=torch.long).to(target_device)
     return batch
 
 
