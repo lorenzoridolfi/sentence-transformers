@@ -322,6 +322,9 @@ def batch_to_device(batch, target_device: device):
     for key in batch:
         if isinstance(batch[key], Tensor):
             batch[key] = batch[key].to(target_device)
+        else:
+            temp = batch[key]
+            batch[key] = torch.tensor(temp).to(target_device)
     return batch
 
 
