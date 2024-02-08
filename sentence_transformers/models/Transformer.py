@@ -1,5 +1,5 @@
 import torch
-import openvino
+import openvino.torch
 from torch import nn
 from transformers import AutoModel, AutoTokenizer, AutoConfig, T5Config, MT5Config
 import json
