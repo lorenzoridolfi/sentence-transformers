@@ -1,7 +1,8 @@
 import functools
 import requests
-from torch import Tensor, device
-from typing import List, Callable, Literal
+from torch import Tensor, device, tensor
+from typing import Any
+from typing import List, Callable, Literal, Any
 from tqdm.autonotebook import tqdm
 import sys
 import importlib
@@ -315,16 +316,21 @@ def http_get(url, path) -> None:
     progress.close()
 
 
-def batch_to_device(batch, target_device: device):
+def batch_to_device(batch: dict, target_device: str) -> dict:
     """
-    send a pytorch batch to a device (CPU/GPU)
+    Send a PyTorch batch to a device (CPU/GPU), ensuring compatibility with SymInt and tensor types.
     """
     for key in batch:
-        if isinstance(batch[key], Tensor):
-            batch[key] = batch[key].to(target_device)
-        else:
-            temp = batch[key]
-            batch[key] = torch.tensor(int(temp), dtype=torch.long).to(target_device)
+        item = batch[key]
+        if isinstance(item, Tensor):
+            batch[key] = item.to(target_device)
+        elif isinstance(item, (int, float, list, tuple)):  # Handle common numerical types and collections
+            batch[key] = tensor(item, device=target_device)
+        # Add more type checks if there are other specific types you expect in your batches
+        # For example, handling SymInt explicitly if there's a direct way to convert it to Tensor in your context
+
+    breakpoint()
+
     return batch
 
 
