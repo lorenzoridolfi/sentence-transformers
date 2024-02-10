@@ -1,5 +1,5 @@
 import torch
-import openvino.torch
+from optimum.intel import OVModelForFeatureExtraction
 from torch import nn
 from transformers import AutoModel, AutoTokenizer, AutoConfig, T5Config, MT5Config
 import json
@@ -64,9 +64,8 @@ class Transformer(nn.Module):
         elif isinstance(config, MT5Config):
             self._load_mt5_model(model_name_or_path, config, cache_dir, **model_args)
         else:
-            model = AutoModel.from_pretrained(model_name_or_path, config=config, cache_dir=cache_dir, **model_args)
-            self.auto_model = torch.compile(model, backend="openvino", options={"device": "CPU", "model_caching": True, "cache_dir": "./model_cache"})
-
+            #model = AutoModel.from_pretrained(model_name_or_path, config=config, cache_dir=cache_dir, **model_args)
+            self.auto_model = OVModelForFeatureExtraction.from_pretrained(model_name_or_path, config=config, **model_args)
     def _load_t5_model(self, model_name_or_path, config, cache_dir, **model_args):
         """Loads the encoder model from T5"""
         from transformers import T5EncoderModel
